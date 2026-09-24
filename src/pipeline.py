@@ -3,8 +3,7 @@ PIPELINE
 
 The orchestrator. Its job is *coordination*, not logic — it calls
 extract, then transform, then load, for each city, and makes sure one
-city's failure doesn't take down the whole run. This is the file you
-run directly.
+city's failure doesn't take down the whole run. 
 
 Usage:
     python src/pipeline.py

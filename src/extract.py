@@ -7,7 +7,7 @@ job is to get bytes from the source into Python, and fail loudly and
 clearly if it can't.
 
 We use Open-Meteo (https://open-meteo.com) because it's free, requires
-no API key, and is perfect for learning.
+no API key.
 """
 
 import logging

@@ -1,4 +1,4 @@
-"""Offline source for learning and repeatable demos."""
+
 import json
 from pathlib import Path
 
