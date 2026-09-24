@@ -10,6 +10,7 @@ Usage:
     python src/pipeline.py
 """
 
+import argparse
 import logging
 import sys
 from pathlib import Path
@@ -19,6 +20,7 @@ sys.path.append(str(Path(__file__).parent))
 from config import CITIES, DB_PATH
 from extract import ExtractError, fetch_current_weather
 from load import get_connection, load_records
+from sample import fetch_sample_weather
 from transform import TransformError, transform_weather
 
 logging.basicConfig(
@@ -28,14 +30,15 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 
-def run() -> dict:
+def run(offline=False) -> dict:
     logger.info("Starting weather ETL pipeline for %d cities", len(CITIES))
     conn = get_connection(DB_PATH)
     succeeded, failed = 0, 0
 
     for city in CITIES:
         try:
-            raw = fetch_current_weather(city["lat"], city["lon"])
+            fetch = fetch_sample_weather if offline else fetch_current_weather
+            raw = fetch(city["lat"], city["lon"])
             record = transform_weather(raw, city["name"], city["country"])
             load_records(conn, [record])
             logger.info(
@@ -61,6 +64,8 @@ def run() -> dict:
 
 
 if __name__ == "__main__":
-    result = run()
+    parser = argparse.ArgumentParser(description="Collect weather for South African cities")
+    parser.add_argument("--offline", action="store_true", help="use saved sample data")
+    result = run(offline=parser.parse_args().offline)
     # Non-zero exit code if nothing succeeded, useful for cron/CI alerting.
     sys.exit(0 if result["succeeded"] > 0 else 1)
