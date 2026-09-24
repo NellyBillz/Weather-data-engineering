@@ -14,12 +14,13 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from datetime import datetime, timezone
 
 sys.path.append(str(Path(__file__).parent))
 
 from config import CITIES, DB_PATH
 from extract import ExtractError, fetch_current_weather
-from load import get_connection, load_records
+from load import get_connection, load_records, save_run
 from sample import fetch_sample_weather
 from transform import TransformError, transform_weather
 
@@ -32,6 +33,7 @@ logger = logging.getLogger("pipeline")
 
 def run(offline=False) -> dict:
     logger.info("Starting weather ETL pipeline for %d cities", len(CITIES))
+    started_at = datetime.now(timezone.utc).isoformat()
     conn = get_connection(DB_PATH)
     succeeded, failed = 0, 0
 
@@ -58,6 +60,8 @@ def run(offline=False) -> dict:
             logger.exception("Unexpected error while processing %s", city["name"])
             failed += 1
 
+    save_run(conn, started_at, datetime.now(timezone.utc).isoformat(),
+             "sample" if offline else "open-meteo", succeeded, failed)
     conn.close()
     logger.info("Pipeline finished. Succeeded: %d, Failed: %d", succeeded, failed)
     return {"succeeded": succeeded, "failed": failed}
