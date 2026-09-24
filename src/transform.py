@@ -58,4 +58,9 @@ def transform_weather(raw: dict, city_name: str, country: str) -> dict:
     if not (0 <= record["humidity_pct"] <= 100):
         raise TransformError(f"Suspicious humidity for {city_name}: {record['humidity_pct']}%")
 
+    if record["wind_speed_kmh"] < 0 or record["wind_speed_kmh"] > 400:
+        raise TransformError(f"Suspicious wind speed for {city_name}")
+    if not (0 <= record["weather_code"] <= 99):
+        raise TransformError(f"Suspicious weather code for {city_name}")
+
     return record
