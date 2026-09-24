@@ -16,7 +16,7 @@ python -m pytest tests -q
 
 `--offline` reads a saved API response, so you can practise without internet. For live weather, run `python src/pipeline.py`. Run it again to see that the same city and observation time update one row instead of creating duplicates. The offline fixture gives every city the same weather values; use the live command to compare real cities.
 
-For a chart and city summary, run `python src/analyze.py` after collecting observations. Output files go in `data/`: `weather.db`, `weather_export.csv`, and `temperature_by_city.png`. They are ignored by Git.
+For a chart and city summary, run `python src/analyze.py` after collecting observations. Output files go in `data/`: `weather.db`, `weather_export.csv`, and `temperature_by_city.png`. 
 
 ## How the pipeline works
 
