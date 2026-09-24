@@ -63,3 +63,26 @@ def load_records(conn: sqlite3.Connection, records: list[dict]) -> int:
     with conn:
         conn.executemany(INSERT_SQL, records)
     return len(records)
+
+RUN_SCHEMA = """
+CREATE TABLE IF NOT EXISTS pipeline_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    started_at TEXT NOT NULL,
+    finished_at TEXT NOT NULL,
+    source TEXT NOT NULL,
+    succeeded INTEGER NOT NULL,
+    failed INTEGER NOT NULL
+);
+"""
+
+
+def save_run(conn: sqlite3.Connection, started_at: str, finished_at: str,
+             source: str, succeeded: int, failed: int) -> None:
+    """Keep a small audit trail of pipeline executions."""
+    with conn:
+        conn.execute(RUN_SCHEMA)
+        conn.execute(
+            "INSERT INTO pipeline_runs (started_at, finished_at, source, succeeded, failed) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (started_at, finished_at, source, succeeded, failed),
+        )
