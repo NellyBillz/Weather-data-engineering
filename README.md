@@ -28,14 +28,4 @@ For a chart and city summary, run `python src/analyze.py` after collecting obser
 
 A scheduled job can call `python src/pipeline.py` periodically. The GitHub Actions workflow runs the offline version on each push, without relying on a live API. A run returns a nonzero exit status only if every city fails; inspect the `failed` count or `pipeline_runs` table to detect partial failures.
 
-## Push these commits
 
-From the repository folder:
-
-```powershell
-git log --oneline -10
-git status
-git push -u origin main
-```
-
-The included history contains ten small commits. The Git remote is configured as `https://github.com/NellyBillz/Weather-data-engineering.git`.
